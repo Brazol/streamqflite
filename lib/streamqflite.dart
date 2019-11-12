@@ -272,6 +272,8 @@ class StreamDatabase extends StreamDatabaseExecutor {
   final StreamController<Set<String>> triggers = StreamController.broadcast();
   final Database _db;
 
+  bool _blockTriggers = false;
+
   StreamDatabase(Database db)
       : _db = db,
         super(db);
@@ -293,11 +295,20 @@ class StreamDatabase extends StreamDatabaseExecutor {
 
   @override
   void _sendTableTrigger(Iterable<String> tables) {
-    triggers.add(tables.toSet());
+    if(!_blockTriggers)
+      triggers.add(tables.toSet());
   }
 
   /// Close the database. Cannot be accessed anymore.
   Future close() => _db.close();
+
+  void startBlockTriggers() {
+    _blockTriggers = true;
+  }
+
+  void stopBlockTriggers() {
+    _blockTriggers = false;
+  }
 
   /// Creates a [Stream] that will notify listeners with a [LazyQuery] for
   /// execution. Listeners will always receive an immediate notification with
