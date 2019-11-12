@@ -302,12 +302,12 @@ class StreamDatabase extends StreamDatabaseExecutor {
   /// Close the database. Cannot be accessed anymore.
   Future close() => _db.close();
 
-  void startBlockTriggers() {
-    _blockTriggers = true;
+  void pauseTableTriggering() {
+    _blockTriggers = false;
   }
 
-  void stopBlockTriggers() {
-    _blockTriggers = false;
+  void resumeTableTriggering() {
+    _blockTriggers = true;
   }
 
   /// Creates a [Stream] that will notify listeners with a [LazyQuery] for
